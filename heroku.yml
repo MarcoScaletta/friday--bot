@@ -1,6 +1,5 @@
-app:
 build:
-    context: .
-    dockerfile: Dockerfile
+    docker:
+      app: Dockerfile
 environment:
     - "FRIDAY_BOT_TOKEN=${FRIDAY_BOT_TOKEN}"
