@@ -1,5 +1,5 @@
 build:
     docker:
       app: Dockerfile
-environment:
-    - "FRIDAY_BOT_TOKEN=${FRIDAY_BOT_TOKEN}"
+config:
+    FRIDAY_BOT_TOKEN: ${FRIDAY_BOT_TOKEN}
