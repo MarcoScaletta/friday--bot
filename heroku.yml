@@ -1,8 +1,6 @@
-version: '3'
-services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-       - "FRIDAY_BOT_TOKEN=${FRIDAY_BOT_TOKEN}"
+app:
+build:
+    context: .
+    dockerfile: Dockerfile
+environment:
+    - "FRIDAY_BOT_TOKEN=${FRIDAY_BOT_TOKEN}"
