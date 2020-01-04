@@ -1,4 +1,4 @@
 FROM python
 RUN pip install python-telegram-bot
-ADD /src/dumb_bot.py /
+ADD /src /
 CMD ["python", "alfred_bot.py"]
