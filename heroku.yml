@@ -2,4 +2,4 @@ build:
   docker:
     web: Dockerfile
   config:
-      FRIDAY_BOT_TOKEN: ${FRIDAY_BOT_TOKEN}
+    ALFRED_BOT_TOKEN: ${ALFRED_BOT_TOKEN}
