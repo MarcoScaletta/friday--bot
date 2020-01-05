@@ -20,33 +20,29 @@ def error(update, context):
 
 
 def main():
-    while True:
-        try:
-            TOKEN = os.environ.get('ALFRED_BOT_TOKEN')
-            updater = Updater(TOKEN, use_context=True)
+    TOKEN = os.environ.get('ALFRED_BOT_TOKEN')
+    updater = Updater(TOKEN, use_context=True)
 
-            dp = updater.dispatcher
-            replier = reply.Replier(dp)
+    dp = updater.dispatcher
+    replier = reply.Replier(dp)
 
-            conv_handler = ConversationHandler(
-                entry_points=[CommandHandler('start', replier.start), CommandHandler(
-                    'fermata', replier.ask_stop)],
-                states={
-                    config.DEFAULT_STATE: [MessageHandler(Filters.text, replier.default), CommandHandler(
-                    'fermata', replier.ask_stop)],
-                    config.GTT_STOP: [MessageHandler(Filters.text, replier.reply_to_stop_number)]},
-                fallbacks=[CommandHandler('start', replier.start), CommandHandler('cancel', replier.cancel)]
-            )
+    conv_handler = ConversationHandler(
+        entry_points=[CommandHandler('start', replier.start), CommandHandler(
+            'fermata', replier.ask_stop)],
+        states={
+            config.DEFAULT_STATE: [MessageHandler(Filters.text, replier.default), CommandHandler(
+            'fermata', replier.ask_stop)],
+            config.GTT_STOP: [MessageHandler(Filters.text, replier.reply_to_stop_number)]},
+        fallbacks=[CommandHandler('start', replier.start), CommandHandler('cancel', replier.cancel)]
+    )
 
-            dp.add_handler(conv_handler)
+    dp.add_handler(conv_handler)
 
-            dp.add_error_handler(error)
+    dp.add_error_handler(error)
 
-            updater.start_polling()
+    updater.start_polling()
 
-            updater.idle()
-        except Exception:
-            logger.warning('Exception')
+    updater.idle()
             
 
 
