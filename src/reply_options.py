@@ -18,12 +18,12 @@ class Replier:
         self.dp = dp
 
     def reply(self, update, message):
-        print("reply")
+        logger.info("reply")
         update.message.reply_text(message)
 
     def start(self, update, context):
         """Send a message when the command /start is issued."""
-        print("start")
+        logger.info("start")
         reply_markup = telegram.ReplyKeyboardRemove()
         update.message.reply_text('Hi, welcome!', reply_markup=reply_markup)
         return config.DEFAULT_STATE
@@ -35,20 +35,20 @@ class Replier:
 
     def default(self, update, context):
         """Echo the user message."""
-        print("default")
+        logger.info("default")
         response = "Cosa? Non ho capito. Prova con questi comandi" + '\n\n'
         response += "- /fermata"
         update.message.reply_text(response)
         
     def cancel(self, update, context):
-        print("cancel")
+        logger.info("cancel")
         user = update.message.from_user
         update.message.reply_text('Bye! I hope we can talk again some day.',
                                 reply_markup=ReplyKeyboardRemove())
         return config.DEFAULT_STATE
 
     def ask_stop(self, update, context):
-        print("ask_stop")
+        logger.info("ask_stop")
         self.reply(update, "Numero della fermata?")
         return config.GTT_STOP
 
@@ -56,7 +56,7 @@ class Replier:
         stop_number = update.message.text
         self.reply(update, str("Ricerca fermata numero " + stop_number + "..."))
         url = config.GTT_URL + stop_number + '/departures'
-        print(url)
+        logger.info(url)
         # logger.log('Send request to %s', url)
         r = requests.get(url)
         if r.status_code == 404:
@@ -66,7 +66,7 @@ class Replier:
             response = "FERMATA " + stop_number + "\n"
             response += GTT_stop_departures.GTTStop.parse_departures(r.text)
             self.reply(update, response)
-        print(r.text)
+        logger.info(r.text)
         return config.DEFAULT_STATE
 
     

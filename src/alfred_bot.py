@@ -20,6 +20,8 @@ def error(update, context):
 
 
 def main():
+    
+    logger.info("Started")
     TOKEN = os.environ.get('ALFRED_BOT_TOKEN')
     updater = Updater(TOKEN, use_context=True)
 
@@ -44,7 +46,7 @@ def main():
 
     updater.idle()
     
-    print("Goodbye")
+    logger.info("Goodbye")
             
 
 
