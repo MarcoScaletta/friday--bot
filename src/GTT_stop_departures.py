@@ -12,7 +12,7 @@ class GTTStop:
             for line in departures_info_json:
                 response_message += "LINEA " + str(line['name']) +'\n'
                 # response_message += "INFO " + line['longName']  +'\n'
-                if len(line['departures']) == 0:
+                if line['departures'] is None or len(line['departures']) == 0:
                     response_message += "Non sono previste partenze per questa linea."
                 else:
                     for departure in line['departures']:

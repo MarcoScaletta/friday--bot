@@ -20,9 +20,11 @@ def main():
         logger.warning("no log option set", log_anyway=True)
     TOKEN = os.environ.get('ALFRED_BOT_TOKEN')
     updater = Updater(TOKEN, use_context=True)
+    bot = telegram.bot.Bot(TOKEN)
 
     dp = updater.dispatcher
-    replier = reply.Replier(dp)
+    
+    replier = reply.Replier(dp, bot)
 
     conv_handler = ConversationHandler(
         
@@ -35,8 +37,8 @@ def main():
             config.DEFAULT_STATE: [
                 MessageHandler(Filters.text, replier.default), 
                 CommandHandler('fermata', replier.ask_stop)],
-            config.GTT_STOP: [
-                MessageHandler(Filters.text, replier.reply_to_stop_number)
+            config.GTT_STOP_NUMBER: [
+                MessageHandler(Filters.text, replier.composing_stop_number)
                 ]
             },
         
