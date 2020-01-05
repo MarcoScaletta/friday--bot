@@ -27,7 +27,7 @@ class Replier:
         """Send a message when the command /start is issued."""
         logger.info("start")
         reply_markup = telegram.ReplyKeyboardRemove()
-        update.message.reply_text('Hi, welcome!', reply_markup=reply_markup)
+        update.message.reply_text('Salve, io sono Alfred, al tuo servizio.', reply_markup=reply_markup)
         return config.DEFAULT_STATE
 
     # def help(self, update, context):
