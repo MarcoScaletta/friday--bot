@@ -18,10 +18,12 @@ class Replier:
         self.dp = dp
 
     def reply(self, update, message):
+        print("reply")
         update.message.reply_text(message)
 
     def start(self, update, context):
         """Send a message when the command /start is issued."""
+        print("start")
         reply_markup = telegram.ReplyKeyboardRemove()
         update.message.reply_text('Hi, welcome!', reply_markup=reply_markup)
         return config.DEFAULT_STATE
@@ -33,17 +35,20 @@ class Replier:
 
     def default(self, update, context):
         """Echo the user message."""
+        print("default")
         response = "Cosa? Non ho capito. Prova con questi comandi" + '\n\n'
         response += "- /fermata"
         update.message.reply_text(response)
         
     def cancel(self, update, context):
+        print("cancel")
         user = update.message.from_user
         update.message.reply_text('Bye! I hope we can talk again some day.',
                                 reply_markup=ReplyKeyboardRemove())
         return config.DEFAULT_STATE
 
     def ask_stop(self, update, context):
+        print("ask_stop")
         self.reply(update, "Numero della fermata?")
         return config.GTT_STOP
 
