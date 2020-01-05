@@ -52,12 +52,13 @@ class Replier:
     def ask_stop(self, update, context):
         logger.info(update.message)
 
-        menu_options = [["1","2","3"], ["4","5","6"], ["7","8","9"], ["DEL","0","OK"]]
+        menu_options = [["1","2","3"], ["4","5","6"], ["7","8","9"], ["BACK", "0",  "DEL"], ["OK"], ["_"]]
 
         keyboard = ReplyKeyboardMarkup(menu_options)
 
         update.message.reply_text(
-            'Numero della fermata\n__(premere/scrivere **OK** una volta finito)__', parse_mode="Markdown", reply_markup=keyboard)
+            'Inserisci il numero della fermata',  reply_markup=keyboard)
+
         return config.GTT_STOP_NUMBER
 
     def composing_stop_number(self, update, context):
@@ -65,29 +66,34 @@ class Replier:
         message = update.message.text
         if message == "OK":
             number = ""
-            for message in self.messages[STOP_NUMBERS][chat_id]:
-                number += str(message.text)
+            if chat_id in self.messages[STOP_NUMBERS] and len(self.messages[STOP_NUMBERS][chat_id]) > 0:
+                for message in self.messages[STOP_NUMBERS][chat_id]:
+                    number += str(message.text)
+                    
+            else:
+                self.reply(update, "Non hai inserito nessun numero, riprova.")
+                return None
+                
             self.messages[STOP_NUMBERS][chat_id] = list()
             logger.info(number)
             return self.reply_to_stop_number(update, context, number)
 
         if message == "DEL":
-            self.bot.deleteMessage(
-                chat_id, message_id=update.message.message_id)
+            self.bot.deleteMessage(chat_id, message_id=update.message.message_id)
             if chat_id in self.messages[STOP_NUMBERS] and len(self.messages[STOP_NUMBERS][chat_id]) > 0:
                 message = self.messages[STOP_NUMBERS][chat_id][-1]
                 self.messages[STOP_NUMBERS][chat_id] = self.messages[STOP_NUMBERS][chat_id][:-1]
                 self.bot.deleteMessage(chat_id, message_id=message.message_id)
+        elif message == "BACK":
+            update.message.reply_text('Ok, annullo.',
+                                    reply_markup=ReplyKeyboardRemove())
+            return ConversationHandler.END
         elif chat_id not in self.messages[STOP_NUMBERS]:
             self.messages[STOP_NUMBERS][chat_id] = [update.message]
         else:
             self.messages[STOP_NUMBERS][chat_id].append(update.message)
 
         logger.info(message)
-        menu_options = [
-            [telegram.KeyboardButton(1)]
-        ]
-        keyboard = ReplyKeyboardMarkup(menu_options)
 
     def reply_to_stop_number(self, update, context, number):
         stop_number = number
@@ -103,7 +109,7 @@ class Replier:
         else:
             response = "FERMATA " + stop_number + "\n"
             response += GTT_stop_departures.GTTStop.parse_departures(r.text)
-            update.message.reply_text(
-                response, reply_markup=ReplyKeyboardRemove())
+            update.message.reply_text(response)
+            return None
         logger.info(r.text)
         return config.DEFAULT_STATE
