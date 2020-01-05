@@ -1,5 +1,5 @@
 
-import logging
+import logger
 import os
 import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
@@ -8,20 +8,16 @@ import config
 import reply_options as reply
 
 
-logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO)
-
-logger = logging.getLogger(__name__)
-
-
 def error(update, context):
     """Log Errors caused by Updates."""
-    logger.warning('Update "%s" caused error "%s"', update, context.error)
+    logger.error('Update "%s" caused error "%s"', update, context.error)
 
 
 def main():
-    
+
     logger.info("Started")
+    if not logger.is_set_log_option():
+        logger.warning("no log option set", log_anyway=True)
     TOKEN = os.environ.get('ALFRED_BOT_TOKEN')
     updater = Updater(TOKEN, use_context=True)
 
@@ -29,13 +25,25 @@ def main():
     replier = reply.Replier(dp)
 
     conv_handler = ConversationHandler(
-        entry_points=[CommandHandler('start', replier.start), CommandHandler(
-            'fermata', replier.ask_stop)],
+        
+        entry_points=[
+            CommandHandler('start', replier.start), 
+            CommandHandler('fermata', replier.ask_stop)],
+        
         states={
-            config.DEFAULT_STATE: [MessageHandler(Filters.text, replier.default), CommandHandler(
-            'fermata', replier.ask_stop)],
-            config.GTT_STOP: [MessageHandler(Filters.text, replier.reply_to_stop_number)]},
-        fallbacks=[CommandHandler('start', replier.start), CommandHandler('cancel', replier.cancel)]
+            
+            config.DEFAULT_STATE: [
+                MessageHandler(Filters.text, replier.default), 
+                CommandHandler('fermata', replier.ask_stop)],
+            config.GTT_STOP: [
+                MessageHandler(Filters.text, replier.reply_to_stop_number)
+                ]
+            },
+        
+        fallbacks=[
+            CommandHandler('start', replier.start),
+            CommandHandler('fermata', replier.ask_stop)
+            ]
     )
 
     dp.add_handler(conv_handler)
@@ -45,9 +53,8 @@ def main():
     updater.start_polling()
 
     updater.idle()
-    
-    logger.info("Goodbye")
-            
+
+    logger.info("Stopped")
 
 
 if __name__ == '__main__':

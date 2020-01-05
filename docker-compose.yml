@@ -6,3 +6,4 @@ services:
       dockerfile: Dockerfile
     environment:
        - "ALFRED_BOT_TOKEN=${ALFRED_BOT_TOKEN}"
+       - "ALFRED_BOT_LOG=${ALFRED_BOT_LOG}"
