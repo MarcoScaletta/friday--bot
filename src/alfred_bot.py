@@ -1,6 +1,5 @@
 
 import logger
-import os
 import telegram
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, ConversationHandler
 import config
@@ -18,9 +17,10 @@ def main():
     logger.info("Started")
     if not logger.is_set_log_option():
         logger.warning("no log option set", log_anyway=True)
-    TOKEN = os.environ.get('ALFRED_BOT_TOKEN')
-    updater = Updater(TOKEN, use_context=True)
-    bot = telegram.bot.Bot(TOKEN)
+    
+    updater = Updater(config.TOKEN, use_context=True)
+    bot = telegram.bot.Bot(config.TOKEN)
+    
 
     dp = updater.dispatcher
     
