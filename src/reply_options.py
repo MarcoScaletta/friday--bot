@@ -107,7 +107,6 @@ class Replier:
         self.reply(update, str("Ricerca fermata numero " + stop_number + "..."))
         url = config.GTT_URL + stop_number + '/departures'
         logger.info(url)
-        logger.info('Send request to %s', url)
         r = requests.get(url)
         if r.status_code == 404:
             self.reply(
@@ -116,10 +115,13 @@ class Replier:
         else:
             response = "FERMATA " + stop_number + "\n"
             response += GTT_stop_departures.GTTStop.parse_departures(r.text)
-            update.message.reply_text(response)
-            return None
+            response += "\n\n"
+            response += "Per fare un'altra ricerca /fermata"
+            
+            update.message.reply_text(response,
+                                      reply_markup=ReplyKeyboardRemove())
         logger.info(r.text)
-        return config.DEFAULT_STATE
+        return ConversationHandler.END
 
     def save_chatID(self, update):
         chatID = update.message["chat"]["id"]
