@@ -56,7 +56,7 @@ class Replier:
         logger.info(update.message)
 
         menu_options = [["1", "2", "3"], ["4", "5", "6"], [
-            "7", "8", "9"], ["BACK", "0",  "DEL"], ["OK"], ["_"]]
+            "7", "8", "9"], ["BACK", "0",  "DEL"], ["OK"]]
 
         keyboard = ReplyKeyboardMarkup(menu_options)
 
@@ -91,8 +91,9 @@ class Replier:
                 self.messages[STOP_NUMBERS][chat_id] = self.messages[STOP_NUMBERS][chat_id][:-1]
                 self.bot.deleteMessage(chat_id, message_id=message.message_id)
         elif message == "BACK":
-            update.message.reply_text('Ok, annullo.',
+            update.message.reply_text("Ok, annullo \n\nPer fare un'altra ricerca /fermata",
                                       reply_markup=ReplyKeyboardRemove())
+            self.messages[STOP_NUMBERS][chat_id].clear()
             return ConversationHandler.END
         elif chat_id not in self.messages[STOP_NUMBERS]:
             self.messages[STOP_NUMBERS][chat_id] = [update.message]
