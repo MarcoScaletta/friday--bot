@@ -14,43 +14,43 @@ def error(update, context):
 
 def main():
 
-    # logger.info("Started")
-    # if not logger.is_set_log_option():
-    #     logger.warning("no log option set", log_anyway=True)
+    logger.info("Started")
+    if not logger.is_set_log_option():
+        logger.warning("no log option set", log_anyway=True)
     
     updater = Updater(config.TOKEN, use_context=True)
-    # bot = telegram.bot.Bot(config.TOKEN)
+    bot = telegram.bot.Bot(config.TOKEN)
     
 
-    # dp = updater.dispatcher
+    dp = updater.dispatcher
     
-    # replier = reply.Replier(dp, bot)
+    replier = reply.Replier(dp, bot)
 
-    # conv_handler = ConversationHandler(
+    conv_handler = ConversationHandler(
         
-    #     entry_points=[
-    #         CommandHandler('start', replier.start), 
-    #         CommandHandler('fermata', replier.ask_stop)],
+        entry_points=[
+            CommandHandler('start', replier.start), 
+            CommandHandler('fermata', replier.ask_stop)],
         
-    #     states={
+        states={
             
-    #         config.DEFAULT_STATE: [
-    #             MessageHandler(Filters.text, replier.default), 
-    #             CommandHandler('fermata', replier.ask_stop)],
-    #         config.GTT_STOP_NUMBER: [
-    #             MessageHandler(Filters.text, replier.composing_stop_number)
-    #             ]
-    #         },
+            config.DEFAULT_STATE: [
+                MessageHandler(Filters.text, replier.default), 
+                CommandHandler('fermata', replier.ask_stop)],
+            config.GTT_STOP_NUMBER: [
+                MessageHandler(Filters.text, replier.composing_stop_number)
+                ]
+            },
         
-    #     fallbacks=[
-    #         CommandHandler('start', replier.start),
-    #         CommandHandler('fermata', replier.ask_stop)
-    #         ]
-    # )
+        fallbacks=[
+            CommandHandler('start', replier.start),
+            CommandHandler('fermata', replier.ask_stop)
+            ]
+    )
 
-    # dp.add_handler(conv_handler)
+    dp.add_handler(conv_handler)
 
-    # dp.add_error_handler(error)
+    dp.add_error_handler(error)
 
     updater.start_polling()
 
