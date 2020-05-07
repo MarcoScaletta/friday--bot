@@ -12,13 +12,14 @@ import GTT_stop_departures
 
 
 STOP_NUMBERS = 0
+LAST_STOP = 1
 
 
 class Replier:
 
     def __init__(self, dp, bot):
         self.dp = dp
-        self.messages = {STOP_NUMBERS: dict()}
+        self.messages = {STOP_NUMBERS: dict(), LAST_STOP: dict()}
         self.bot = bot
 
     def reply(self, update, message):
@@ -103,6 +104,8 @@ class Replier:
         logger.info(message)
 
     def reply_to_stop_number(self, update, context, number):
+        chat_id = update.message.chat_id
+        message = update.message.text
         self.save_chatID(update)
         stop_number = number
         self.reply(update, str("Ricerca fermata numero " + stop_number + "..."))
@@ -114,6 +117,7 @@ class Replier:
                 update, "Sembra che la fermata che hai inserito non esiste, riprova.")
             return config.GTT_STOP_NUMBER
         else:
+            self.messages[LAST_STOP][chat_id] = stop_number
             response = "FERMATA " + stop_number + "\n"
             response += GTT_stop_departures.GTTStop.parse_departures(r.text)
             response += "\n\n"
