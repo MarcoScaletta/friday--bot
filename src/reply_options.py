@@ -129,5 +129,5 @@ class Replier:
         return ConversationHandler.END
 
     def save_chatID(self, update):
-        chatID = update.message["chat"]["id"]
-        persistent.insert_if_not_exists(chatID)
+        return None
+
