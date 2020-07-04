@@ -1,6 +1,6 @@
 build:
   docker:
-    web: Dockerfile
+    worker: Dockerfile
   config:
     ALFRED_BOT_TOKEN: ${ALFRED_BOT_TOKEN}
     ALFRED_BOT_LOG: ${ALFRED_BOT_LOG}
