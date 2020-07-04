@@ -94,8 +94,8 @@ class Replier:
         elif message == "BACK":
             update.message.reply_text("Ok, annullo \n\nPer fare un'altra ricerca /fermata",
                                       reply_markup=ReplyKeyboardRemove())
-	    if chat_id in self.messages[STOP_NUMBERS]:
-            	self.messages[STOP_NUMBERS][chat_id].clear()
+			if chat_id in self.messages[STOP_NUMBERS]:
+		    	self.messages[STOP_NUMBERS][chat_id].clear()
             return ConversationHandler.END
         elif chat_id not in self.messages[STOP_NUMBERS]:
             self.messages[STOP_NUMBERS][chat_id] = [update.message]
