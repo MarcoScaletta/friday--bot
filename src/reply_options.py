@@ -34,7 +34,7 @@ class Replier:
         reply_markup = telegram.ReplyKeyboardRemove()
 
         response = "Salve, sono Alfred, al suo servizio.\n"
-        response += "Prema su fermata per cercare gli arrivi a una fermata GTT."
+        response += "Prema su /fermata per cercare gli arrivi a una fermata GTT."
         update.message.reply_text(response, reply_markup=reply_markup)
         return config.DEFAULT_STATE
 
