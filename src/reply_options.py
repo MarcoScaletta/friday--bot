@@ -32,16 +32,17 @@ class Replier:
         """Send a message when the command /start is issued."""
         logger.info("start")
         reply_markup = telegram.ReplyKeyboardRemove()
-        update.message.reply_text(
-            'Salve, io sono Alfred, al tuo servizio.', reply_markup=reply_markup)
+
+        response = "Salve, sono Alfred, al suo servizio.\n"
+        response += "Prema su fermata per cercare gli arrivi a una fermata GTT."
+        update.message.reply_text(response, reply_markup=reply_markup)
         return config.DEFAULT_STATE
 
     def default(self, update, context):
         """Echo the user message."""
 
-        self.save_chatID(update)
         logger.info("default")
-        response = "Cosa? Non ho capito. Prova con questi comandi" + '\n\n'
+        response = "Come? Temo di non aver capito. Selezioni uno di questi comandi" + '\n\n'
         response += "- /fermata"
         update.message.reply_text(response)
 
@@ -81,9 +82,6 @@ class Replier:
         if not persistent.exists_chatID(chatID):
             persistent.insert_chatID(chatID)
             update.message.reply_text('Nessuna fermata preferita impostata!\nPer impostare una nuova fermata preferita usa il comando /fermata inserisci la fermata e poi usa il comando /salva_fermata_preferita')
-
-
-
         return ConversationHandler.END
 
     def composing_stop_number(self, update, context):

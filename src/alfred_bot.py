@@ -40,8 +40,8 @@ def main():
         states={
             
             config.DEFAULT_STATE: [
-                MessageHandler(Filters.text, replier.default), 
-                CommandHandler('fermata', replier.ask_stop)],
+                CommandHandler('fermata', replier.ask_stop),
+                MessageHandler(Filters.text, replier.default)],
             config.GTT_STOP_NUMBER: [
                 MessageHandler(Filters.text, replier.composing_stop_number)
                 ]
@@ -50,7 +50,6 @@ def main():
         fallbacks=[
             CommandHandler('start', replier.start),
             CommandHandler('fermata', replier.ask_stop),
-            CommandHandler('my_stops', replier.get_my_stops),
             ]
     )
 
