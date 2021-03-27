@@ -1,0 +1,6 @@
+src/__pycache__
+.vscode
+build_docker.sh
+src/google-credentials.json
+google-credentials.json
+alfred-dev.sh
