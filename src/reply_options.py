@@ -54,6 +54,7 @@ class Replier:
         return config.DEFAULT_STATE
 
     def ask_stop(self, update, context):
+        logger.info("ask_stop")
         chatID = self.get_chat_ID(update)        
         logger.info(update.message)
 
@@ -78,6 +79,7 @@ class Replier:
         return config.GTT_STOP_NUMBER
 
     def get_my_stops(self,update,context):
+        logger.info("get_my_stops")
         chatID = update.message["chat"]["id"]
         if not persistent.exists_chatID(chatID):
             persistent.insert_chatID(chatID)
@@ -85,7 +87,7 @@ class Replier:
         return ConversationHandler.END
 
     def composing_stop_number(self, update, context):
-
+        logger.info("composing_stop_number")
 
         self.save_chatID(update)
         chat_id = self.get_chat_ID(update)
@@ -100,7 +102,7 @@ class Replier:
             try: 
                 number = str(int(message[1:]))
                 self.messages[LAST_STOP][chat_id] = number
-                return self.reply_to_stop_number(update, context, number)
+                return self.reply_to_stop_number(update, context)
             except ValueError:
                 update.message.reply_text(message[1:] +" non e' un numero di fermata, riprova.",
                                       reply_markup=ReplyKeyboardRemove())
@@ -118,7 +120,7 @@ class Replier:
                 self.messages[STOP_NUMBERS][chat_id] = list()
                 logger.info(number)
                 self.messages[LAST_STOP][chat_id] = number
-                return self.reply_to_stop_number(update, context, number)
+                return self.reply_to_stop_number(update, context)
 
             if message == "DEL":
                 self.bot.deleteMessage(
@@ -140,11 +142,16 @@ class Replier:
 
         logger.info(message)
 
-    def reply_to_stop_number(self, update, context, number):
+    def test_state_transition(self,update,context):
+        print("TEST STATE ")
+
+
+    def reply_to_stop_number(self, update, context):
+        logger.info("reply_to_stop_number")
         chat_id = self.get_chat_ID(update)
         message = update.message.text
         self.save_chatID(update)
-        stop_number = number
+        stop_number = self.messages[LAST_STOP][chat_id]
         self.reply(update, str("Ricerca fermata numero " + stop_number + "..."))
         url = config.GTT_URL + stop_number + '/departures'
         logger.info(url)
@@ -170,6 +177,7 @@ class Replier:
         return None
 
     def save_stop(self, update, context):
+        logger.info("save_stop")
         chatID = self.get_chat_ID(update)
         print(list(map(lambda x:str(x), self.messages[LAST_STOP])))
         if  chatID not in self.messages[LAST_STOP]:
@@ -178,10 +186,76 @@ class Replier:
             try:
                 last_stop = self.messages[LAST_STOP][chatID]
                 persistent.set_fav_stop(chatID, last_stop)
-                self.reply(update, "La fermata e' stata salvata con successo")
+                self.reply(update, f"La fermata {last_stop} e'  stata salvata con successo")
             except Exception as e:
                 self.reply(update, "Qualcosa non e' andato a buon fine, per favore riprova.")
                 print(e)
 
     def get_chat_ID(self,update):
+        logger.info("get_chat_ID")
         return str(update.message["chat"]["id"])
+
+    def composing_stop_number_abs(self,update,context):
+        logger.info("composing_stop_number_abs")
+        self.composing_stop_number_concr(update,context, config.GTT_REPLY_NUMBER_REQ)
+
+    def composing_stop_number_concr(self, update, context, nextState):
+        logger.info("composing_stop_number_concr")
+        self.save_chatID(update)
+        chat_id = self.get_chat_ID(update)
+        message = update.message.text
+
+        if chat_id in self.messages[STOP_NUMBERS]:
+            print(list(map(lambda x : str(x), self.messages[STOP_NUMBERS][chat_id])))
+        print(f"message {message}")
+        if message[0] == "/":
+            print(f"\t==> {self.messages[LAST_STOP]}")
+            if chat_id in self.messages[STOP_NUMBERS]:
+                self.messages[STOP_NUMBERS][chat_id].clear()
+            try: 
+                number = str(int(message[1:]))
+                self.messages[LAST_STOP][chat_id] = number
+                print(f"\t==> {self.messages[LAST_STOP]}")
+                return nextState
+                # return self.reply_to_stop_number(update, context, number)
+            except ValueError:
+                update.message.reply_text(message[1:] +" non e' un numero di fermata, riprova.",
+                                      reply_markup=ReplyKeyboardRemove())
+        else:
+            if message == "OK":
+                number = ""
+                if chat_id in self.messages[STOP_NUMBERS] and len(self.messages[STOP_NUMBERS][chat_id]) > 0:
+                    for message in self.messages[STOP_NUMBERS][chat_id]:
+                        number += str(message.text)
+                        self.last_stop = number
+                        self.messages[LAST_STOP][chat_id] = number
+                else:
+                    self.reply(update, "Non hai inserito nessun numero, riprova.")
+                    # return None
+
+                self.messages[STOP_NUMBERS][chat_id] = list()
+                logger.info(number)
+                self.messages[LAST_STOP][chat_id] = number
+                print(f"before return {nextState}")
+                return nextState
+                # return self.reply_to_stop_number(update, context, number)
+
+            if message == "DEL":
+                self.bot.deleteMessage(
+                    chat_id, message_id=update.message.message_id)
+                if chat_id in self.messages[STOP_NUMBERS] and len(self.messages[STOP_NUMBERS][chat_id]) > 0:
+                    message = self.messages[STOP_NUMBERS][chat_id][-1]
+                    self.messages[STOP_NUMBERS][chat_id] = self.messages[STOP_NUMBERS][chat_id][:-1]
+                    self.bot.deleteMessage(chat_id, message_id=message.message_id)
+            elif message == "BACK":
+                update.message.reply_text("Ok, annullo \n\nPer fare un'altra ricerca /fermata",
+                                        reply_markup=ReplyKeyboardRemove())
+                if chat_id in self.messages[STOP_NUMBERS]:
+                    self.messages[STOP_NUMBERS][chat_id].clear()
+                return ConversationHandler.END
+            elif chat_id not in self.messages[STOP_NUMBERS]:
+                self.messages[STOP_NUMBERS][chat_id] = [update.message]
+            else:
+                self.messages[STOP_NUMBERS][chat_id].append(update.message)
+
+        logger.info(message)

@@ -42,9 +42,12 @@ def main():
             config.DEFAULT_STATE: [
                 CommandHandler('fermata', replier.ask_stop),
                 MessageHandler(Filters.text, replier.default)],
+            config.GTT_REPLY_NUMBER_REQ: [
+                MessageHandler(Filters.text, replier.test_state_transition)
+                ],
             config.GTT_STOP_NUMBER: [
-                MessageHandler(Filters.text, replier.composing_stop_number)
-                ]
+                MessageHandler(Filters.text, replier.composing_stop_number_abs)
+                ],
             },
         
         fallbacks=[
