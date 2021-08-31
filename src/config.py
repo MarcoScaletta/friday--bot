@@ -1,4 +1,5 @@
-import os 
+import os
+import sys
 
 DEFAULT_STATE = 0
 GTT_STOP = 1
@@ -11,5 +12,9 @@ DB_PORT = os.environ.get('ALFRED_DB_PORT')
 DB_NAME = os.environ.get('ALFRED_DB_NAME')
 
 ALFRED_BOT_LOG = os.environ.get('ALFRED_BOT_LOG')
-TOKEN = os.environ.get('ALFRED_BOT_TOKEN')
+TOKEN_NAME = 'ALFRED_BOT_TOKEN' if not list(sys.argv).__contains__("-dev") else 'ALFRED_BOT_DEV'
+print(TOKEN_NAME)
+print(os.environ)
+print(os.environ.get(TOKEN_NAME))
+TOKEN = os.environ.get(TOKEN_NAME)
 

@@ -19,7 +19,7 @@ def main():
     if not logger.is_set_log_option():
         logger.warning("no log option set", log_anyway=True)
     
-    # print(persistent.cred)
+    print(config.TOKEN)
     updater = Updater(config.TOKEN, use_context=True)
     bot = telegram.bot.Bot(config.TOKEN)
     
